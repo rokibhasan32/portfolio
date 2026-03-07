@@ -892,7 +892,7 @@
         const KB = {
             identity: {
                 keywords: ['who', 'rokib', 'hasan', 'about', 'introduce', 'tell me about', 'herself', 'background', 'bio'],
-                answer: `<strong>Rokib Hasan</strong> is a Software Engineering graduate majoring in <em>Data Science</em> from Daffodil International University, Dhaka, Bangladesh. She's passionate about AI, data analytics, and building intelligent systems for social impact. 🚀`
+                answer: `<strong>Rokib Hasan</strong> is a Software Engineering graduate majoring in <em>Data Science</em> from Daffodil International University, Dhaka, Bangladesh. He's passionate about AI, data analytics, and building intelligent systems for social impact. 🚀`
             },
             projects: {
                 keywords: ['project', 'built', 'portfolio', 'work', 'develop', 'libra', 'zerowaste', 'blood', 'supply chain', 'pc build', 'innovation'],
