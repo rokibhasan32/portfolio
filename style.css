@@ -76,7 +76,7 @@ a:hover {
 /* Mute toggle */
 #mute-toggle {
     position: fixed;
-    top: 14px;
+    top: 10px;
     left: 16px;
     z-index: 1002;
     background: rgba(15, 15, 40, .7);
@@ -111,45 +111,13 @@ a:hover {
     pointer-events: none;
 }
 
-/* ═══════════════════════════════════════════
-   PROGRESS BAR
-   ═══════════════════════════════════════════ */
-#progress-bar-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, .05);
-    z-index: 1000;
-}
-
-#progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
-    transition: width .5s ease;
-    border-radius: 0 2px 2px 0;
-    box-shadow: 0 0 10px var(--neon-cyan);
-}
-
-#progress-text {
-    position: fixed;
-    top: 8px;
-    right: 16px;
-    font-family: var(--font-heading);
-    font-size: .7rem;
-    color: var(--neon-cyan);
-    z-index: 1001;
-    text-shadow: var(--glow-cyan);
-}
 
 /* ═══════════════════════════════════════════
    NAVIGATION
    ═══════════════════════════════════════════ */
 #galaxy-nav {
     position: fixed;
-    top: 4px;
+    top: 0px;
     left: 0;
     width: 100%;
     z-index: 999;
