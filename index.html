@@ -1,575 +1,727 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Rokib Hasan — Data Analyst & AI Enthusiast. Explore Rokib's Universe, a gamified space-themed portfolio showcasing projects, research, and achievements in data science and artificial intelligence.">
-    <title>Rokib's Universe — Portfolio</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description"
+            content="Rokib Hasan — Data Analyst & AI Enthusiast. Explore Rokib's Universe, a gamified space-themed portfolio showcasing projects, research, and achievements in data science and artificial intelligence.">
+        <title>Rokib's — Portfolio</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
 
-<body>
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- ROCKET CURSOR                               -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div id="rocket-cursor" aria-hidden="true">
-        <svg viewBox="0 0 32 48" width="32" height="48" xmlns="http://www.w3.org/2000/svg">
-            <!-- Rocket body -->
-            <defs>
-                <linearGradient id="rocketBody" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#c8d8ff" />
-                    <stop offset="50%" stop-color="#8aa8e8" />
-                    <stop offset="100%" stop-color="#5a78c0" />
-                </linearGradient>
-                <radialGradient id="rocketGlow" cx="50%" cy="50%">
-                    <stop offset="0%" stop-color="rgba(140,180,255,0.4)" />
-                    <stop offset="100%" stop-color="rgba(140,180,255,0)" />
-                </radialGradient>
-                <linearGradient id="flameGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#80b0ff" />
-                    <stop offset="40%" stop-color="#4080ff" />
-                    <stop offset="100%" stop-color="rgba(60,80,255,0)" />
-                </linearGradient>
-            </defs>
-            <!-- Glow aura (only visible on hover of clickable) -->
-            <circle class="rocket-glow" cx="16" cy="18" r="16" fill="url(#rocketGlow)" opacity="0" />
-            <!-- Nose cone -->
-            <path d="M16 2 L20 14 L12 14 Z" fill="url(#rocketBody)" stroke="rgba(180,210,255,0.3)" stroke-width="0.5" />
-            <!-- Fuselage -->
-            <rect x="11" y="14" width="10" height="16" rx="2" fill="url(#rocketBody)" stroke="rgba(180,210,255,0.2)"
-                stroke-width="0.5" />
-            <!-- Window -->
-            <circle cx="16" cy="19" r="2.5" fill="#0a0a2a" stroke="rgba(100,160,255,0.5)" stroke-width="0.5" />
-            <circle cx="16" cy="19" r="1.2" fill="rgba(100,180,255,0.3)" />
-            <!-- Left fin -->
-            <path d="M11 26 L7 34 L11 30 Z" fill="#5a78c0" stroke="rgba(180,210,255,0.2)" stroke-width="0.3" />
-            <!-- Right fin -->
-            <path d="M21 26 L25 34 L21 30 Z" fill="#5a78c0" stroke="rgba(180,210,255,0.2)" stroke-width="0.3" />
-            <!-- Thruster flame -->
-            <g class="rocket-flame">
-                <ellipse cx="16" cy="34" rx="3.5" ry="8" fill="url(#flameGrad)" opacity="0.7">
-                    <animate attributeName="ry" values="8;10;7;9;8" dur="0.3s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.7;0.9;0.6;0.8;0.7" dur="0.25s"
-                        repeatCount="indefinite" />
-                </ellipse>
-                <!-- Inner bright core -->
-                <ellipse cx="16" cy="33" rx="1.5" ry="4" fill="rgba(200,230,255,0.8)">
-                    <animate attributeName="ry" values="4;5;3.5;4.5;4" dur="0.2s" repeatCount="indefinite" />
-                </ellipse>
-            </g>
-        </svg>
-    </div>
-    <canvas id="rocket-trail-canvas" aria-hidden="true"></canvas>
+    <body>
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- BIG BANG INTRO OVERLAY                      -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div id="bigbang-overlay">
-        <canvas id="bigbang-canvas"></canvas>
-        <div id="bigbang-text">
-            <p id="bb-line1"></p>
-            <p id="bb-line2"></p>
-            <p id="bb-line3"></p>
-        </div>
-        <button id="bigbang-btn" style="display:none;">⚡ Initiate the Big Bang ⚡</button>
-        <h1 id="bb-title" style="display:none;">Rokib Portfolio</h1>
-    </div>
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- MAIN SITE (displays immediately)            -->
+        <!-- ═══════════════════════════════════════════ -->
+        <div id="main-site">
 
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- MAIN SITE (hidden until intro finishes)     -->
-    <!-- ═══════════════════════════════════════════ -->
-    <div id="main-site" style="display:none;">
+            <!-- Starfield background canvas -->
+            <canvas id="starfield-canvas"></canvas>
 
-        <!-- Starfield background canvas -->
-        <canvas id="starfield-canvas"></canvas>
-
-        <!-- Exploration progress bar -->
-        <div id="progress-bar-container">
-            <div id="progress-bar"></div>
-            <span id="progress-text">0% Explored</span>
-        </div>
-
-        <!-- Navigation -->
-        <nav id="galaxy-nav">
-            <div class="nav-brand">🌌 Rokib's Universe</div>
-            <ul id="nav-links">
-                <li><a href="#hero" data-planet="hero">Home</a></li>
-                <li><a href="#about" data-planet="about">Research Lab</a></li>
-                <li><a href="#skills" data-planet="skills">Achievement Hall</a></li>
-                <li><a href="#projects" data-planet="projects">Innovation Station</a></li>
-                <li><a href="#experience" data-planet="experience">Experience</a></li>
-                <li><a href="#achievements" data-planet="achievements">Hall of Fame</a></li>
-                <li><a href="#certifications" data-planet="certifications">Certifications</a></li>
-                <li><a href="#command-center" data-planet="command-center">Command Center</a></li>
-                <li><a href="#contact" data-planet="contact">Space Station</a></li>
-            </ul>
-            <button id="nav-toggle" aria-label="Toggle navigation">☰</button>
-        </nav>
-
-        <!-- Achievement Toast Container -->
-        <div id="toast-container"></div>
-
-        <!-- ══════════ HERO SECTION ══════════ -->
-        <section id="hero" class="section planet-section" data-planet="hero">
-            <div class="hero-content">
-                <div class="hero-planet-orbit">
-                    <div class="orbit-ring ring-1"></div>
-                    <div class="orbit-ring ring-2"></div>
-                    <div class="orbit-ring ring-3"></div>
-                    <div class="hero-planet"></div>
-                </div>
-                <h1 class="hero-title glitch-text">Exploring Rokib's Universe</h1>
-                <h2 class="hero-name neon-text">Rokib Hasan</h2>
-                <p class="hero-tagline">Turning Data into Intelligence<br>Building AI solution for Social Impact</p>
-                <div class="typewriter-container">
-                    <span class="typewriter-prefix">&gt; </span>
-                    <span id="typewriter-text"></span>
-                    <span class="typewriter-cursor">|</span>
-                </div>
-                <a href="#about" class="cta-button" id="start-exploration">
-                    <span class="cta-icon">🚀</span> Start Exploration
-                </a>
+            <!-- Exploration progress bar -->
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+                <span id="progress-text">0% Explored</span>
             </div>
-        </section>
 
-        <!-- ══════════ ABOUT / RESEARCH LAB ══════════ -->
-        <section id="about" class="section planet-section" data-planet="about">
-            <div class="section-header">
-                <div class="planet-icon planet-purple">🔬</div>
-                <h2 class="section-title">Research Lab</h2>
-                <p class="section-subtitle">About Planet</p>
-            </div>
-            <div class="section-content">
-                <div class="glass-card about-card reveal-element">
-                    <p>Rokib Hasan is a Software Engineering graduate majoring in Data Science with a strong
-                        passion for artificial intelligence and applied analytics.</p>
-                    <p>His journey began with software development, where he built a strong foundation in problem-solving and analytical thinking. Over time, his curiosity led him to explore data analysis, machine learning, and artificial intelligence, expanding his expertise into intelligent and data-driven systems.</p>
-                    <p>He has worked on award-recognized AI projects, contributed to global innovation challenges, and
-                        developed solutions aimed at solving real-world problems with technology.</p>
+            <!-- Navigation -->
+            <nav id="galaxy-nav">
+                <div class="nav-brand">🌌 Rokib's Portfolio</div>
+                <ul id="nav-links">
+                    <li><a href="#hero" data-planet="hero">Home</a></li>
+                    <li><a href="#about" data-planet="about">My Journey</a></li>
+                    <li><a href="#skills" data-planet="skills">My
+                            Toolkit</a></li>
+                    <li><a href="#projects" data-planet="projects">What I've
+                            Built</a></li>
+                    <li><a href="#research"
+                            data-planet="research">Research</a></li>
+                    <li><a href="#experience" data-planet="experience">Career
+                            Timeline</a></li>
+                    <li><a href="#achievements" data-planet="achievements">My
+                            Wins </a></li>
+                    <li><a href="#certifications"
+                            data-planet="certifications">Certificates</a></li>
+                    <li><a href="#command-center"
+                            data-planet="command-center">My Stats</a></li>
+                    <li><a href="#contact" data-planet="contact">Let's
+                            Connect</a></li>
+                </ul>
+                <button id="nav-toggle"
+                    aria-label="Toggle navigation">☰</button>
+            </nav>
+
+            <!-- Achievement Toast Container -->
+            <div id="toast-container"></div>
+
+            <!-- ══════════ HERO SECTION ══════════ -->
+            <section id="hero" class="section planet-section"
+                data-planet="hero">
+                <div class="hero-content">
+                    <div class="hero-planet-orbit">
+                        <div class="orbit-ring ring-1"></div>
+                        <div class="orbit-ring ring-2"></div>
+                        <div class="orbit-ring ring-3"></div>
+                        <div class="hero-planet"></div>
+                    </div>
+                    <h1 class="hero-title glitch-text">Exploring Rokib's
+                        Portfolio</h1>
+                    <h2 class="hero-name neon-text">Rokib Hasan</h2>
+                    <p class="hero-tagline">Turning Data into
+                        Intelligence<br>Building AI solution for Social
+                        Impact</p>
+                    <div class="typewriter-container">
+                        <span class="typewriter-prefix">&gt; </span>
+                        <span id="typewriter-text"></span>
+                        <span class="typewriter-cursor">|</span>
+                    </div>
+                    <a href="#about" class="cta-button" id="start-exploration">
+                        <span class="cta-icon">🚀</span> Start Exploration
+                    </a>
                 </div>
-                <div class="about-focus-grid">
-                    <div class="glass-card focus-card reveal-element">
-                        <div class="focus-icon">🎯</div>
-                        <h3>Current Focus</h3>
-                        <p>Applied Data Science and AI for Social Good</p>
-                    </div>
-                    <div class="glass-card focus-card reveal-element">
-                        <div class="focus-icon">🚀</div>
-                        <h3>Future Goal</h3>
-                        <p>Preparing for Master's and PhD opportunities in Artificial Intelligence and Data Science.</p>
-                    </div>
-                    <div class="glass-card focus-card reveal-element">
-                        <div class="focus-icon">🤝</div>
-                        <h3>Open To</h3>
-                        <p>Research collaboration, learning opportunities, and impactful AI projects.</p>
-                    </div>
+            </section>
+
+            <!-- ══════════ ABOUT ══════════ -->
+            <section id="about" class="section planet-section"
+                data-planet="about">
+                <div class="section-header">
+                    <div class="planet-icon planet-purple">🔬</div>
+                    <h2 class="section-title">My Journey ✨</h2>
+                    <p class="section-subtitle">About Me</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- ══════════ SKILLS / ACHIEVEMENT HALL ══════════ -->
-        <section id="skills" class="section planet-section" data-planet="skills">
-            <div class="section-header">
-                <div class="planet-icon planet-cyan">⚔️</div>
-                <h2 class="section-title">Achievement Hall</h2>
-                <p class="section-subtitle">Skills Planet</p>
-            </div>
-            <div class="section-content skills-grid">
-                <div class="glass-card skill-card reveal-element" data-xp="95">
-                    <div class="skill-icon">🐍</div>
-                    <h3>Python</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="95"></div>
+                <div class="section-content">
+                    <div class="glass-card about-card reveal-element">
+                        <p>Rokib Hasan is a Software Engineering graduate
+                            majoring in Data Science with a strong
+                            passion for artificial intelligence and applied
+                            analytics.</p>
+                        <p>His journey began with software development, where he
+                            built a strong foundation in problem-solving and
+                            analytical thinking. Over time, his curiosity led
+                            him to explore data analysis, machine learning, and
+                            artificial intelligence, expanding his expertise
+                            into intelligent and data-driven systems.</p>
+                        <p>He has worked on award-recognized AI projects,
+                            contributed to global innovation challenges, and
+                            developed solutions aimed at solving real-world
+                            problems with technology.</p>
                     </div>
-                    <span class="xp-text">950 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="90">
-                    <div class="skill-icon">🗄️</div>
-                    <h3>MySQL / SQL</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="90"></div>
-                    </div>
-                    <span class="xp-text">900 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="92">
-                    <div class="skill-icon">📊</div>
-                    <h3>Power BI</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="92"></div>
-                    </div>
-                    <span class="xp-text">920 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="88">
-                    <div class="skill-icon">☕</div>
-                    <h3>Java</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="88"></div>
-                    </div>
-                    <span class="xp-text">880 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="82">
-                    <div class="skill-icon">🤖</div>
-                    <h3>Machine Learning</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="82"></div>
-                    </div>
-                    <span class="xp-text">820 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="85">
-                    <div class="skill-icon">⚙️</div>
-                    <h3>C / C++</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="85"></div>
-                    </div>
-                    <span class="xp-text">850 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="75">
-                    <div class="skill-icon">🌐</div>
-                    <h3>Web Design</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="75"></div>
-                    </div>
-                    <span class="xp-text">750 / 1000 XP</span>
-                </div>
-                <div class="glass-card skill-card reveal-element" data-xp="78">
-                    <div class="skill-icon">🧠</div>
-                    <h3>AI Engineering</h3>
-
-                    <div class="xp-bar">
-                        <div class="xp-fill" data-width="78"></div>
-                    </div>
-                    <span class="xp-text">780 / 1000 XP</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ══════════ PROJECTS / INNOVATION STATION ══════════ -->
-        <section id="projects" class="section planet-section" data-planet="projects">
-            <div class="section-header">
-                <div class="planet-icon planet-orange">🛰️</div>
-                <h2 class="section-title">Innovation Station</h2>
-                <p class="section-subtitle">Projects Planet</p>
-            </div>
-            <div class="section-content">
-                <!-- Static featured projects -->
-                <div class="projects-grid" id="featured-projects">
-                    <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>LibraAI</h3>
-                        <p>LibraAI,
-an agentic AI project designed to enhance the library experience through intelligent, user-focused features. It includes an NLP-powered chatbot for real-time assistance, a machine-learning book recommendation system, and a browser-based Digital Reader. Built to make library access more interactive, personalized, and efficient.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">JavaScript</span>
-                            <span class="tech-tag">NLP</span>
-                            <span class="tech-tag">Machine Learning</span>
-                            <span class="tech-tag"></span>
+                    <div class="about-focus-grid">
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">🎯</div>
+                            <h3>Current Focus</h3>
+                            <p>Applied Data Science and AI for Social Good</p>
                         </div>
-                        <a href="https://github.com/DIU-Students-Projects/Libra-AI" target="_blank" class="project-link">View on
-                            GitHub →</a>
-                    </div>
-                    <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>ZeroWaste</h3>
-                        <p>ZeroWaste , An AI-powered platform that improves waste management by allowing users to report waste through photos, using AI to classify waste types, prioritize cleanup areas, and optimize volunteer coordination with smart routing and clustering.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Data Analytics</span>
-                            <span class="tech-tag">ML</span>
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">🚀</div>
+                            <h3>Future Goal</h3>
+                            <p>Preparing for Master's and PhD opportunities in
+                                Artificial Intelligence and Data Science.</p>
                         </div>
-                        <a href="https://github.com/rokibhasan32/ZeroWaste_Project" target="_blank" class="project-link">View on
-                            GitHub →</a>
-                    </div>
-                    <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>Football Match Analysis</h3>
-                        <p>Built an AI-based football analysis system with real-time detection of players, the ball, and referees using a custom-trained model. Implemented live and recorded match analytics including player speed, distance covered, team positioning, and camera motion estimation. Developed the full pipeline from video frame extraction and annotation to model training and real-time performance analysis.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">OpenCV</span>
-                            <span class="tech-tag">Deep Learning (YOLO/custom models)</span>
-                            <span class="tech-tag">Computer Vision & Sports Analytics</span>
-                            <span class="tech-tag">Roboflow</span>
-                            <span class="tech-tag">LabelImg</span>
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">🤝</div>
+                            <h3>Open To</h3>
+                            <p>Research collaboration, learning opportunities,
+                                and impactful AI projects.</p>
                         </div>
-                        <a href="https://github.com/rokibhasan32/Football_Match_Analysis" target="_blank" class="project-link">View on
-                            GitHub →</a>
                     </div>
-                     <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>MedicartAI</h3>
-                        <p>Built an AI-powered healthcare platform with pharmacy services, prescription uploads, emergency requests, equipment rental, and pharmacist consultations. Integrated a 24/7 AI chatbot (Groq + Llama 3.3) for medication guidance. Developed with FastAPI, SQLite, and JWT authentication for a secure, responsive web experience.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">FastAPI</span>
-                            <span class="tech-tag">Groq API (Llama 3.3)</span>
+                </div>
+            </section>
+
+            <!-- ══════════ SKILLS / ACHIEVEMENT HALL ══════════ -->
+            <section id="skills" class="section planet-section"
+                data-planet="skills">
+                <div class="section-header">
+                    <div class="planet-icon planet-cyan">⚔️</div>
+                    <h2 class="section-title">My Toolkit 🛠️</h2>
+                    <p class="section-subtitle">Skills & Expertise</p>
+                </div>
+                <div class="section-content skills-grid">
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="95">
+                        <div class="skill-icon">🐍</div>
+                        <h3>Python</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="95"></div>
                         </div>
-                        <a href="https://github.com/rokibhasan32/MedicartAI" target="_blank" class="project-link">View on
-                            GitHub →</a>
+                        <span class="xp-text">950 / 1000 XP</span>
                     </div>
-                    <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>BloodSupport</h3>
-                        <p>Blood bank application written in C to connect blood donors with patients in need.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">C</span>
-                            <span class="tech-tag">Data Structures</span>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="90">
+                        <div class="skill-icon">🗄️</div>
+                        <h3>MySQL / SQL</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="90"></div>
                         </div>
-                        <a href="https://github.com/rokibhasan32" target="_blank" class="project-link">View on
-                            GitHub →</a>
+                        <span class="xp-text">900 / 1000 XP</span>
                     </div>
-                    <div class="glass-card project-card reveal-element">
-                        <div class="project-status">🟢 Featured</div>
-                        <h3>AI Chatbot for Customer Support</h3>
-                        <p>Developed a chatbot capable of handling basic customer queries using Python, Groq API, and Llama 3.3. Integrated the AI solution into a web interface with Streamlit and FastAPI to provide seamless, real-time user interaction.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Groq API</span>
-                            <span class="tech-tag">Streamlit</span>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="92">
+                        <div class="skill-icon">📊</div>
+                        <h3>Power BI</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="92"></div>
                         </div>
-                        <a href="https://github.com/rokibhasan32/MedicartAI" target="_blank" class="project-link">View on
-                            GitHub →</a>
+                        <span class="xp-text">920 / 1000 XP</span>
                     </div>
-                </div>
-                <!-- GitHub API repos -->
-                <h3 class="subsection-title" style="margin-top:3rem;">📡 Live from GitHub</h3>
-                <div class="projects-grid" id="github-repos">
-                    <div class="glass-card loading-card">
-                        <div class="loading-spinner"></div>
-                        <p>Fetching repositories from the cosmos...</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="88">
+                        <div class="skill-icon">☕</div>
+                        <h3>Java</h3>
 
-        <!-- ══════════ EXPERIENCE ══════════ -->
-        <section id="experience" class="section planet-section" data-planet="experience">
-            <div class="section-header">
-                <div class="planet-icon planet-blue">🪐</div>
-                <h2 class="section-title">Experience Orbit</h2>
-                <p class="section-subtitle">Career Journey</p>
-            </div>
-            <div class="section-content">
-                <div class="timeline">
-                    <div class="timeline-item glass-card reveal-element">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">August 2024 – April 2025</div>
-                        <h3>Artificial Intelligence Trainer</h3>
-                        <h4>Outlier</h4>
-                        <p>Worked remotely reviewing and refining code to improve AI model training and performance.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ══════════ ACHIEVEMENTS / HALL OF FAME ══════════ -->
-        <section id="achievements" class="section planet-section" data-planet="achievements">
-            <div class="section-header">
-                <div class="planet-icon planet-gold">🏆</div>
-                <h2 class="section-title">Hall of Fame</h2>
-                <p class="section-subtitle">Achievement Planet</p>
-            </div>
-            <div class="section-content achievements-grid">
-                <div class="glass-card trophy-card reveal-element" data-tier="gold">
-                    <div class="trophy-icon">🥇</div>
-                    <h3>1st Runner-Up</h3>
-                    <p>DIU Agentic AI Excellence Award</p>
-                </div>
-                <div class="glass-card trophy-card reveal-element" data-tier="silver">
-                    <div class="trophy-icon">🥈</div>
-                    <h3>2nd Runner-Up</h3>
-                    <p>Robotics Project Exhibition</p>
-                </div>
-                <div class="glass-card trophy-card reveal-element" data-tier="silver">
-                    <div class="trophy-icon">⚡</div>
-                    <h3>7th Place — Top 1.4%</h3>
-                    <p>Data Hackathon </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ══════════ CERTIFICATIONS ══════════ -->
-        <section id="certifications" class="section planet-section" data-planet="certifications">
-            <div class="section-header">
-                <div class="planet-icon planet-teal">📜</div>
-                <h2 class="section-title">Certification Nebula</h2>
-                <p class="section-subtitle">Certifications Planet</p>
-            </div>
-            <div class="section-content certs-grid">
-                <div class="glass-card cert-card reveal-element">
-                    <div class="cert-badge">☁️</div>
-                    <h3>Machine Learning for NLP</h3>
-                    <p>AWS</p>
-                </div>
-                <div class="glass-card cert-card reveal-element">
-                    <div class="cert-badge">☁️</div>
-                    <h3>Machine Learning Foundations</h3>
-                    <p>AWS</p>
-                </div>
-                <div class="glass-card cert-card reveal-element">
-                    <div class="cert-badge">🧠</div>
-                    <h3>Supervised Machine Learning</h3>
-                    <p>DeepLearning.AI</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ══════════ DATA COMMAND CENTER ══════════ -->
-        <section id="command-center" class="section planet-section" data-planet="command-center">
-            <div class="section-header">
-                <div class="planet-icon planet-green">📡</div>
-                <h2 class="section-title">Data Command Center</h2>
-                <p class="section-subtitle">Analytics Dashboard</p>
-            </div>
-            <div class="section-content">
-                <div class="kpi-grid">
-                    <div class="glass-card kpi-card reveal-element">
-                        <div class="kpi-icon">🚀</div>
-                        <div class="kpi-value" data-target="10">0</div>
-                        <div class="kpi-label">Projects Built</div>
-                    </div>
-                    <div class="glass-card kpi-card reveal-element">
-                        <div class="kpi-icon">🏆</div>
-                        <div class="kpi-value" data-target="3">0</div>
-                        <div class="kpi-label">Competitions Won</div>
-                    </div>
-                    <div class="glass-card kpi-card reveal-element">
-                        <div class="kpi-icon">🧪</div>
-                        <div class="kpi-value" data-target="4">0</div>
-                        <div class="kpi-label">AI Research Projects</div>
-                    </div>
-                    <div class="glass-card kpi-card reveal-element">
-                        <div class="kpi-icon">💻</div>
-                        <div class="kpi-value" data-target="2">0</div>
-                        <div class="kpi-label">Programming Contests</div>
-                    </div>
-                </div>
-                <div class="charts-area">
-                    <div class="glass-card chart-card reveal-element">
-                        <h3>Skills Distribution</h3>
-                        <canvas id="chart-skills" width="400" height="250"></canvas>
-                    </div>
-                    <div class="glass-card chart-card reveal-element">
-                        <h3>Achievement Timeline</h3>
-                        <canvas id="chart-timeline" width="400" height="250"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ══════════ CONTACT / SPACE STATION ══════════ -->
-        <section id="contact" class="section planet-section" data-planet="contact">
-            <div class="section-header">
-                <div class="planet-icon planet-red">📡</div>
-                <h2 class="section-title">Space Station</h2>
-                <p class="section-subtitle">Contact Planet</p>
-            </div>
-            <div class="section-content contact-layout">
-                <div class="glass-card terminal-card reveal-element">
-                    <div class="terminal-header">
-                        <span class="terminal-dot red"></span>
-                        <span class="terminal-dot yellow"></span>
-                        <span class="terminal-dot green"></span>
-                        <span class="terminal-title">rokib@universe:~$ contact --info</span>
-                    </div>
-                    <div class="terminal-body">
-                        <p><span class="term-key">Name:</span> Rokib Hasan</p>
-                        <p><span class="term-key">Location:</span> Dhaka, Bangladesh </p>
-                        <p><span class="term-key">Phone:</span> +8801716529578</p>
-                        <p><span class="term-key">Email:</span> <a
-                                href="mailto:rokibhasan5039l@gmail.com">rokibhasan5039l@gmail.com</a></p>
-                        <p><span class="term-key">LinkedIn:</span> <a
-                                href="https://www.linkedin.com/in/rokib-hasan/"
-                                target="_blank">jafrin-alam-prima</a></p>
-                        <p><span class="term-key">GitHub:</span> <a href="https://github.com/rokibhasan32"
-                                target="_blank">Rokib-Hasan</a></p>
-                        <p class="term-cursor">█</p>
-                    </div>
-                </div>
-                <div class="glass-card form-card reveal-element">
-                    <h3>📨 Send a Transmission</h3>
-                    <form id="contact-form" action="https://formspree.io/f/mgonwrrk" method="POST">
-                        <div class="form-group">
-                            <label for="sender-name">Your Name</label>
-                            <input type="text" id="sender-name" name="name" placeholder="Commander..."
-                                autocomplete="name" required>
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="88"></div>
                         </div>
-                        <div class="form-group">
-                            <label for="sender-email">Your Email</label>
-                            <input type="email" id="sender-email" name="email" placeholder="signal@galaxy.com"
-                                autocomplete="email" required>
+                        <span class="xp-text">880 / 1000 XP</span>
+                    </div>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="82">
+                        <div class="skill-icon">🤖</div>
+                        <h3>Machine Learning</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="82"></div>
                         </div>
-                        <div class="form-group">
-                            <label for="sender-message">Message</label>
-                            <textarea id="sender-message" name="message" rows="4"
-                                placeholder="Transmit your message across the cosmos..." required></textarea>
+                        <span class="xp-text">820 / 1000 XP</span>
+                    </div>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="85">
+                        <div class="skill-icon">⚙️</div>
+                        <h3>C / C++</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="85"></div>
                         </div>
-                        <button type="submit" class="cta-button">🚀 Transmit Message</button>
-                    </form>
+                        <span class="xp-text">850 / 1000 XP</span>
+                    </div>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="75">
+                        <div class="skill-icon">🌐</div>
+                        <h3>Web Design</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="75"></div>
+                        </div>
+                        <span class="xp-text">750 / 1000 XP</span>
+                    </div>
+                    <div class="glass-card skill-card reveal-element"
+                        data-xp="78">
+                        <div class="skill-icon">🧠</div>
+                        <h3>AI Engineering</h3>
+
+                        <div class="xp-bar">
+                            <div class="xp-fill" data-width="78"></div>
+                        </div>
+                        <span class="xp-text">780 / 1000 XP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════ PROJECTS / INNOVATION STATION ══════════ -->
+            <section id="projects" class="section planet-section"
+                data-planet="projects">
+                <div class="section-header">
+                    <div class="planet-icon planet-orange">🛰️</div>
+                    <h2 class="section-title">What I've Built 💻</h2>
+                    <p class="section-subtitle">Projects Portfolio</p>
+                </div>
+                <div class="section-content">
+                    <!-- Static featured projects -->
+                    <div class="projects-grid" id="featured-projects">
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>LibraAI</h3>
+                            <p>LibraAI,
+                                an agentic AI project designed to enhance the
+                                library experience through intelligent,
+                                user-focused features. It includes an
+                                NLP-powered chatbot for real-time assistance, a
+                                machine-learning book recommendation system, and
+                                a browser-based Digital Reader. Built to make
+                                library access more interactive, personalized,
+                                and efficient.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">NLP</span>
+                                <span class="tech-tag">Machine Learning</span>
+                                <span class="tech-tag"></span>
+                            </div>
+                            <a
+                                href="https://github.com/DIU-Students-Projects/Libra-AI"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>ZeroWaste</h3>
+                            <p>ZeroWaste , An AI-powered platform that improves
+                                waste management by allowing users to report
+                                waste through photos, using AI to classify waste
+                                types, prioritize cleanup areas, and optimize
+                                volunteer coordination with smart routing and
+                                clustering.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Data Analytics</span>
+                                <span class="tech-tag">ML</span>
+                            </div>
+                            <a
+                                href="https://github.com/rokibhasan32/ZeroWaste_Project"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>Football Match Analysis</h3>
+                            <p>Built an AI-based football analysis system with
+                                real-time detection of players, the ball, and
+                                referees using a custom-trained model.
+                                Implemented live and recorded match analytics
+                                including player speed, distance covered, team
+                                positioning, and camera motion estimation.
+                                Developed the full pipeline from video frame
+                                extraction and annotation to model training and
+                                real-time performance analysis.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">OpenCV</span>
+                                <span class="tech-tag">Deep Learning
+                                    (YOLO/custom models)</span>
+                                <span class="tech-tag">Computer Vision & Sports
+                                    Analytics</span>
+                                <span class="tech-tag">Roboflow</span>
+                                <span class="tech-tag">LabelImg</span>
+                            </div>
+                            <a
+                                href="https://github.com/rokibhasan32/Football_Match_Analysis"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>MedicartAI</h3>
+                            <p>Built an AI-powered healthcare platform with
+                                pharmacy services, prescription uploads,
+                                emergency requests, equipment rental, and
+                                pharmacist consultations. Integrated a 24/7 AI
+                                chatbot (Groq + Llama 3.3) for medication
+                                guidance. Developed with FastAPI, SQLite, and
+                                JWT authentication for a secure, responsive web
+                                experience.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">FastAPI</span>
+                                <span class="tech-tag">Groq API (Llama
+                                    3.3)</span>
+                            </div>
+                            <a href="https://github.com/rokibhasan32/MedicartAI"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>BloodSupport</h3>
+                            <p>Blood bank application written in C to connect
+                                blood donors with patients in need.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">C</span>
+                                <span class="tech-tag">Data Structures</span>
+                            </div>
+                            <a href="https://github.com/rokibhasan32"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                        <div class="glass-card project-card reveal-element">
+                            <div class="project-status">🟢 Featured</div>
+                            <h3>AI Chatbot for Customer Support</h3>
+                            <p>Developed a chatbot capable of handling basic
+                                customer queries using Python, Groq API, and
+                                Llama 3.3. Integrated the AI solution into a web
+                                interface with Streamlit and FastAPI to provide
+                                seamless, real-time user interaction.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Groq API</span>
+                                <span class="tech-tag">Streamlit</span>
+                            </div>
+                            <a href="https://github.com/rokibhasan32/MedicartAI"
+                                target="_blank" class="project-link">View on
+                                GitHub →</a>
+                        </div>
+                    </div>
+                    <!-- GitHub API repos -->
+                    <h3 class="subsection-title" style="margin-top:3rem;">📡
+                        Live from GitHub</h3>
+                    <div class="projects-grid" id="github-repos">
+                        <div class="glass-card loading-card">
+                            <div class="loading-spinner"></div>
+                            <p>Fetching repositories from the cosmos...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ══════════ RESEARCH ══════════ -->
+            <section id="research" class="section planet-section"
+                data-planet="research">
+                <div class="section-header">
+                    <div class="planet-icon planet-purple">🔬</div>
+                    <h2 class="section-title">Research</h2>
+                </div>
+                <div class="section-content">
+                    <div class="glass-card about-card reveal-element">
+                        <h3
+                            style="color: var(--neon-cyan); margin-bottom: 1rem; font-family: var(--font-heading);">Enhancing
+                            Sports Performance with Big Data and Machine
+                            Learning-Powered Predictive Analytics</h3>
+                        <p><strong>Status:</strong> Ongoing Research</p>
+                        <p>Developed an end-to-end interpretable AI framework
+                            for tactical analysis of football matches using big
+                            data and XAI techniques. Implemented a custom YOLOv8
+                            object detection model combined with DeepSORT
+                            tracking to extract player trajectories from
+                            full-match broadcast videos.</p>
+                        <p>Applied camera motion compensation and top-down
+                            projection to calculate spatial-temporal features
+                            such as player speed, distance covered, and team
+                            formations. Integrated an XAI layer using Grad-CAM
+                            and SHAP to generate transparent, human-readable
+                            explanations of tactical insights.</p>
+                        <p>Achieved strong performance metrics: mAP@0.5 = 0.677,
+                            and high accuracy for key classes (Player AP: 0.990;
+                            Referee AP: 0.995; Goalkeeper AP: 0.871). Enabled
+                            actionable insights for coaching staff, including
+                            event recognition (e.g., possession turnovers) and
+                            contextual performance metrics.</p>
+                    </div>
+                    <div class="about-focus-grid">
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">🤖</div>
+                            <h3>Technical Implementation</h3>
+                            <p><strong>YOLOv8:</strong> Custom object detection
+                                for players, ball, and
+                                referees<br><strong>DeepSORT:</strong>
+                                Multi-object tracking from broadcast
+                                videos<br><strong>Camera Compensation:</strong>
+                                Advanced spatial positioning analysis</p>
+                        </div>
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">📊</div>
+                            <h3>Performance Metrics</h3>
+                            <p><strong>mAP@0.5:</strong> 0.677<br><strong>Player
+                                    AP:</strong> 0.990<br><strong>Referee
+                                    AP:</strong> 0.995<br><strong>Goalkeeper
+                                    AP:</strong> 0.871</p>
+                        </div>
+                        <div class="glass-card focus-card reveal-element">
+                            <div class="focus-icon">🎯</div>
+                            <h3>Key Applications</h3>
+                            <p><strong>Event Recognition:</strong> Possession
+                                turnovers & critical match
+                                events<br><strong>Coaching
+                                    Intelligence:</strong> Actionable tactical
+                                insights<br><strong>Real-Time Analysis:</strong>
+                                Live match performance data</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <div class="glass-card reveal-element"
+                            style="padding: 1.5rem;">
+                            <h4
+                                style="color: var(--neon-cyan); font-family: var(--font-heading); margin-bottom: 1rem;">🔑
+                                Key Technologies</h4>
+                            <div class="tech-tags">
+                                <span class="tech-tag">YOLOv8</span>
+                                <span class="tech-tag">DeepSORT</span>
+                                <span class="tech-tag">OpenCV</span>
+                                <span class="tech-tag">Grad-CAM</span>
+                                <span class="tech-tag">SHAP</span>
+                                <span class="tech-tag">Computer Vision</span>
+                                <span class="tech-tag">Explainable AI</span>
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">PyTorch</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="experience" class="section planet-section"
+                data-planet="experience">
+                <div class="section-header">
+                    <div class="planet-icon planet-blue">📅</div>
+                    <h2 class="section-title">Career Timeline</h2>
+                    <p class="section-subtitle">My Professional Journey</p>
+                </div>
+                <div class="section-content">
+                    <div class="timeline">
+                        <div class="timeline-item glass-card reveal-element">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">August 2024 – April
+                                2025</div>
+                            <h3>Artificial Intelligence Trainer</h3>
+                            <h4>Outlier</h4>
+                            <p>Worked remotely reviewing and refining code to
+                                improve AI model training and performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ══════════ EXPERIENCE ══════════ -->
+            <section id="experience" class="section planet-section"
+                data-planet="experience">
+                <div class="section-header">
+                    <div class="planet-icon planet-blue">🪐</div>
+                    <h2 class="section-title">Career Timeline 📅</h2>
+                    <p class="section-subtitle">Career Journey</p>
+                </div>
+                <div class="section-content">
+                    <div class="timeline">
+                        <div class="timeline-item glass-card reveal-element">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">August 2024 – April
+                                2025</div>
+                            <h3>Artificial Intelligence Trainer</h3>
+                            <h4>Outlier</h4>
+                            <p>Worked remotely reviewing and refining code to
+                                improve AI model training and performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════ ACHIEVEMENTS / HALL OF FAME ══════════ -->
+            <section id="achievements" class="section planet-section"
+                data-planet="achievements">
+                <div class="section-header">
+                    <div class="planet-icon planet-gold">🏆</div>
+                    <h2 class="section-title">My Wins 🏆</h2>
+                    <p class="section-subtitle">Achievements</p>
+                </div>
+                <div class="section-content achievements-grid">
+                    <div class="glass-card trophy-card reveal-element"
+                        data-tier="gold">
+                        <div class="trophy-icon">🥇</div>
+                        <h3>1st Runner-Up</h3>
+                        <p>DIU Agentic AI Excellence Award</p>
+                    </div>
+                    <div class="glass-card trophy-card reveal-element"
+                        data-tier="silver">
+                        <div class="trophy-icon">🥈</div>
+                        <h3>2nd Runner-Up</h3>
+                        <p>Robotics Project Exhibition</p>
+                    </div>
+                    <div class="glass-card trophy-card reveal-element"
+                        data-tier="silver">
+                        <div class="trophy-icon">⚡</div>
+                        <h3>7th Place — Top 1.4%</h3>
+                        <p>Data Hackathon </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════ CERTIFICATIONS ══════════ -->
+            <section id="certifications" class="section planet-section"
+                data-planet="certifications">
+                <div class="section-header">
+                    <div class="planet-icon planet-teal">📜</div>
+                    <h2 class="section-title">Certificates 📚</h2>
+                    <p class="section-subtitle">Certifications </p>
+                </div>
+                <div class="section-content certs-grid">
+                    <div class="glass-card cert-card reveal-element">
+                        <div class="cert-badge">☁️</div>
+                        <h3>Machine Learning for NLP</h3>
+                        <p>AWS</p>
+                    </div>
+                    <div class="glass-card cert-card reveal-element">
+                        <div class="cert-badge">☁️</div>
+                        <h3>Machine Learning Foundations</h3>
+                        <p>AWS</p>
+                    </div>
+                    <div class="glass-card cert-card reveal-element">
+                        <div class="cert-badge">🧠</div>
+                        <h3>Supervised Machine Learning</h3>
+                        <p>DeepLearning.AI</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════ DATA COMMAND CENTER ══════════ -->
+            <section id="command-center" class="section planet-section"
+                data-planet="command-center">
+                <div class="section-header">
+                    <div class="planet-icon planet-green">📡</div>
+                    <h2 class="section-title">My Stats 📊</h2>
+                    <p class="section-subtitle">Analytics Dashboard</p>
+                </div>
+                <div class="section-content">
+                    <div class="kpi-grid">
+                        <div class="glass-card kpi-card reveal-element">
+                            <div class="kpi-icon">🚀</div>
+                            <div class="kpi-value" data-target="10">0</div>
+                            <div class="kpi-label">Projects Built</div>
+                        </div>
+                        <div class="glass-card kpi-card reveal-element">
+                            <div class="kpi-icon">🏆</div>
+                            <div class="kpi-value" data-target="3">0</div>
+                            <div class="kpi-label">Competitions Won</div>
+                        </div>
+                        <div class="glass-card kpi-card reveal-element">
+                            <div class="kpi-icon">🧪</div>
+                            <div class="kpi-value" data-target="4">0</div>
+                            <div class="kpi-label">AI Research Projects</div>
+                        </div>
+                        <div class="glass-card kpi-card reveal-element">
+                            <div class="kpi-icon">💻</div>
+                            <div class="kpi-value" data-target="2">0</div>
+                            <div class="kpi-label">Programming Contests</div>
+                        </div>
+                    </div>
+                    <div class="charts-area">
+                        <div class="glass-card chart-card reveal-element">
+                            <h3>Skills Distribution</h3>
+                            <canvas id="chart-skills" width="400"
+                                height="250"></canvas>
+                        </div>
+                        <div class="glass-card chart-card reveal-element">
+                            <h3>Achievement Timeline</h3>
+                            <canvas id="chart-timeline" width="400"
+                                height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════ CONTACT / SPACE STATION ══════════ -->
+            <section id="contact" class="section planet-section"
+                data-planet="contact">
+                <div class="section-header">
+                    <div class="planet-icon planet-red">📡</div>
+                    <h2 class="section-title">Let's Connect 💬</h2>
+                    <p class="section-subtitle">Contact me anytime!</p>
+                </div>
+                <div class="section-content contact-layout">
+                    <div class="glass-card terminal-card reveal-element">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="terminal-title">rokib@universe:~$
+                                contact --info</span>
+                        </div>
+                        <div class="terminal-body">
+                            <p><span class="term-key">Name:</span> Rokib
+                                Hasan</p>
+                            <p><span class="term-key">Location:</span> Dhaka,
+                                Bangladesh </p>
+                            <p><span class="term-key">Phone:</span>
+                                +8801716529578</p>
+                            <p><span class="term-key">Email:</span> <a
+                                    href="mailto:rokibhasan5039l@gmail.com">rokibhasan5039l@gmail.com</a></p>
+                            <p><span class="term-key">LinkedIn:</span> <a
+                                    href="https://www.linkedin.com/in/rokib-hasan/"
+                                    target="_blank">jafrin-alam-prima</a></p>
+                            <p><span class="term-key">GitHub:</span> <a
+                                    href="https://github.com/rokibhasan32"
+                                    target="_blank">Rokib-Hasan</a></p>
+                            <p class="term-cursor">█</p>
+                        </div>
+                    </div>
+                    <div class="glass-card form-card reveal-element">
+                        <h3>📨 Send a Transmission</h3>
+                        <form id="contact-form"
+                            action="https://formspree.io/f/mgonwrrk"
+                            method="POST">
+                            <div class="form-group">
+                                <label for="sender-name">Your Name</label>
+                                <input type="text" id="sender-name" name="name"
+                                    placeholder="Commander..."
+                                    autocomplete="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sender-email">Your Email</label>
+                                <input type="email" id="sender-email"
+                                    name="email" placeholder="signal@galaxy.com"
+                                    autocomplete="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sender-message">Message</label>
+                                <textarea id="sender-message" name="message"
+                                    rows="4"
+                                    placeholder="Transmit your message across the cosmos..."
+                                    required></textarea>
+                            </div>
+                            <button type="submit" class="cta-button">🚀 Transmit
+                                Message</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <p>© 2026 Rokib Hasan — Exploring the Rokib's Portfolio</p>
+            </footer>
+
+            <!-- ══════════ HIDDEN EASTER EGG ══════════ -->
+            <div id="easter-egg" title="What's this data fragment?">📊</div>
+            <section id="hidden-research" class="section" style="display:none;">
+                <div class="glass-card reveal-element"
+                    style="max-width:800px;margin:auto;padding:2rem;">
+                    <h2 class="neon-text">🔓 Secret Research Vision</h2>
+                    <p>You've discovered a hidden data fragment floating in the
+                        cosmos!</p>
+                    <p>Rokib's long-term research vision is to develop
+                        <strong>Explainable AI systems</strong> that bridge
+                        the gap between complex machine learning models and
+                        real-world decision-making — especially in
+                        healthcare, education, and humanitarian contexts.</p>
+                    <p>He envisions a future where AI is not a black box but a
+                        transparent partner, empowering communities
+                        with data-driven insights that are understandable,
+                        ethical, and actionable.</p>
+                    <p><em>"Data is the new telescope — it lets us see what was always there but never understood."</em></p>
+                </div>
+            </section>
+
+            <!-- ══════════ AI ASSISTANT ══════════ -->
+            <div id="ai-assistant">
+                <button id="ai-toggle" aria-label="Toggle AI Assistant">
+                    <span class="ai-icon">🤖</span>
+                    <span class="ai-label">Ask Rokib AI</span>
+                </button>
+                <div id="ai-chat" style="display:none;">
+                    <div class="ai-chat-header">
+                        <span>🤖 Rokib AI Assistant</span>
+                        <button id="ai-close" aria-label="Close chat">✕</button>
+                    </div>
+                    <div id="ai-chat-messages">
+                        <div class="ai-msg bot">Hi! I'm Rokib AI. Ask me about
+                            projects, research, achievements, or skills!
+                            🚀</div>
+                    </div>
+                    <div class="ai-chat-input">
+                        <input type="text" id="ai-input"
+                            placeholder="Ask me anything...">
+                        <button id="ai-send" aria-label="Send">➤</button>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Footer -->
-        <footer id="footer">
-            <p>© 2026 Rokib Hasan — Exploring the Rokib's Universe</p>
-        </footer>
+        </div><!-- end #main-site -->
 
-        <!-- ══════════ HIDDEN EASTER EGG ══════════ -->
-        <div id="easter-egg" title="What's this data fragment?">📊</div>
-        <section id="hidden-research" class="section" style="display:none;">
-            <div class="glass-card reveal-element" style="max-width:800px;margin:auto;padding:2rem;">
-                <h2 class="neon-text">🔓 Secret Research Vision</h2>
-                <p>You've discovered a hidden data fragment floating in the cosmos!</p>
-                <p>Rokib's long-term research vision is to develop <strong>Explainable AI systems</strong> that bridge
-                    the gap between complex machine learning models and real-world decision-making — especially in
-                    healthcare, education, and humanitarian contexts.</p>
-                <p>He envisions a future where AI is not a black box but a transparent partner, empowering communities
-                    with data-driven insights that are understandable, ethical, and actionable.</p>
-                <p><em>"Data is the new telescope — it lets us see what was always there but never understood."</em></p>
-            </div>
-        </section>
-
-        <!-- ══════════ AI ASSISTANT ══════════ -->
-        <div id="ai-assistant">
-            <button id="ai-toggle" aria-label="Toggle AI Assistant">
-                <span class="ai-icon">🤖</span>
-                <span class="ai-label">Ask Rokib AI</span>
-            </button>
-            <div id="ai-chat" style="display:none;">
-                <div class="ai-chat-header">
-                    <span>🤖 Rokib AI Assistant</span>
-                    <button id="ai-close" aria-label="Close chat">✕</button>
-                </div>
-                <div id="ai-chat-messages">
-                    <div class="ai-msg bot">Hi! I'm Rokib AI. Ask me about projects, research, achievements, or skills!
-                        🚀</div>
-                </div>
-                <div class="ai-chat-input">
-                    <input type="text" id="ai-input" placeholder="Ask me anything...">
-                    <button id="ai-send" aria-label="Send">➤</button>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- end #main-site -->
-
-    <script src="script.js"></script>
-</body>
+        <script src="script.js"></script>
+    </body>
 
 </html>

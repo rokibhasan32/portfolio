@@ -1,7 +1,3 @@
-/* ═══════════════════════════════════════════════════════════════
-   ROKIB'S Portfolio — Main Script
-   ═══════════════════════════════════════════════════════════════ */
-
 (function () {
     'use strict';
 
@@ -51,41 +47,6 @@
         lfo.connect(lfoGain);
         lfoGain.connect(musicOscillators[0].osc.frequency);
         lfo.start();
-    }
-
-    /* Deep cosmic boom */
-    function playBoom() {
-        ensureAudio();
-        const dur = 2;
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        const filter = audioCtx.createBiquadFilter();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(80, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + dur);
-        filter.type = 'lowpass';
-        filter.frequency.value = 200;
-        g.gain.setValueAtTime(0.35, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-        osc.connect(filter);
-        filter.connect(g);
-        g.connect(musicGain);
-        osc.start();
-        osc.stop(audioCtx.currentTime + dur);
-        // White noise burst
-        const bufSize = audioCtx.sampleRate * 0.5;
-        const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.1));
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buf;
-        const ng = audioCtx.createGain();
-        ng.gain.setValueAtTime(0.15, audioCtx.currentTime);
-        ng.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
-        const nf = audioCtx.createBiquadFilter();
-        nf.type = 'lowpass'; nf.frequency.value = 400;
-        noise.connect(nf); nf.connect(ng); ng.connect(musicGain);
-        noise.start(); noise.stop(audioCtx.currentTime + 1.5);
     }
 
     /* UI beep */
@@ -147,308 +108,7 @@
     }
 
     /* ────────────────────────────────────────────
-       1.  BIG BANG CINEMATIC INTRO (Realistic)
-       ──────────────────────────────────────────── */
-    const bbCanvas = document.getElementById('bigbang-canvas');
-    const bbCtx = bbCanvas.getContext('2d');
-    let bbW, bbH, bbParticles = [], bbState = 'idle';
-
-    function resizeBB() { bbW = bbCanvas.width = window.innerWidth; bbH = bbCanvas.height = window.innerHeight; }
-    resizeBB();
-    window.addEventListener('resize', resizeBB);
-
-    // Subtle ambient dust particles
-    const cosmicDust = Array.from({ length: 80 }, () => ({
-        x: Math.random() * 4000, y: Math.random() * 4000,
-        r: Math.random() * 0.8 + 0.2, a: Math.random() * 0.15 + 0.02,
-        vx: (Math.random() - 0.5) * 0.1, vy: (Math.random() - 0.5) * 0.1
-    }));
-
-    function drawCosmicDust() {
-        cosmicDust.forEach(p => {
-            p.x += p.vx; p.y += p.vy;
-            if (p.x < 0) p.x = bbW; if (p.x > bbW) p.x = 0;
-            if (p.y < 0) p.y = bbH; if (p.y > bbH) p.y = 0;
-            bbCtx.beginPath(); bbCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            bbCtx.fillStyle = `rgba(180,200,255,${p.a})`;
-            bbCtx.fill();
-        });
-    }
-
-    // Realistic Big Bang particle — white/blue/faint purple only
-    class BBParticle {
-        constructor(cx, cy, type) {
-            this.cx = cx; this.cy = cy;
-            const angle = Math.random() * Math.PI * 2;
-            const speed = type === 'shockwave' ? (Math.random() * 12 + 6) :
-                type === 'star' ? (Math.random() * 5 + 1) :
-                    (Math.random() * 3 + 0.5);
-            this.vx = Math.cos(angle) * speed;
-            this.vy = Math.sin(angle) * speed;
-            this.x = cx; this.y = cy;
-            this.r = type === 'shockwave' ? Math.random() * 2.5 + 1 :
-                type === 'star' ? Math.random() * 1.5 + 0.3 :
-                    Math.random() * 1 + 0.3;
-            this.life = 1;
-            this.decay = type === 'shockwave' ? 0.02 :
-                type === 'star' ? 0.004 :
-                    type === 'nebula' ? 0.002 : 0.008;
-            this.type = type;
-            // Realistic color: white core, blue plasma, faint purple nebula
-            if (type === 'shockwave') {
-                this.color = [200 + Math.random() * 55, 210 + Math.random() * 45, 255]; // white-blue
-            } else if (type === 'star') {
-                const t = Math.random();
-                this.color = t < 0.6 ? [200 + Math.random() * 55, 210 + Math.random() * 45, 255] : // white-blue
-                    t < 0.85 ? [180, 190, 255] : // cool blue
-                        [200, 180, 240]; // faint purple
-            } else {
-                this.color = [140 + Math.random() * 40, 130 + Math.random() * 30, 200 + Math.random() * 55]; // purple-blue nebula
-            }
-        }
-        update() {
-            this.x += this.vx; this.y += this.vy;
-            this.vx *= (this.type === 'star' ? 0.998 : 0.99);
-            this.vy *= (this.type === 'star' ? 0.998 : 0.99);
-            this.life -= this.decay;
-        }
-        draw(ctx) {
-            if (this.life <= 0) return;
-            const a = this.life * (this.type === 'shockwave' ? 0.9 : 0.6);
-            const [cr, cg, cb] = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r * (this.type === 'shockwave' ? (2 - this.life) : 1), 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${cr},${cg},${cb},${a})`;
-            if (this.type === 'shockwave' && this.life > 0.6) {
-                ctx.shadowColor = `rgba(${cr},${cg},${cb},${a * 0.6})`;
-                ctx.shadowBlur = 15;
-            }
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    // Singularity
-    let singularity = { r: 0, phase: 'none', flash: 0, shockwaveR: 0 };
-
-    function drawSingularity(ctx, cx, cy) {
-        if (singularity.phase === 'none') return;
-        const pulse = 1 + Math.sin(Date.now() * 0.015) * 0.2;
-        const r = singularity.r * pulse;
-
-        // Outer blue plasma glow
-        const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 3);
-        g2.addColorStop(0, `rgba(150,180,255,${0.15 * (r / 50)})`);
-        g2.addColorStop(0.5, `rgba(100,120,200,${0.06 * (r / 50)})`);
-        g2.addColorStop(1, 'transparent');
-        ctx.beginPath(); ctx.arc(cx, cy, r * 3, 0, Math.PI * 2);
-        ctx.fillStyle = g2; ctx.fill();
-
-        // Inner white-blue core
-        const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        g1.addColorStop(0, 'rgba(255,255,255,0.95)');
-        g1.addColorStop(0.3, 'rgba(200,220,255,0.7)');
-        g1.addColorStop(0.7, 'rgba(130,160,255,0.3)');
-        g1.addColorStop(1, 'transparent');
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = g1; ctx.fill();
-    }
-
-    // Shockwave ring
-    function drawShockwave(ctx, cx, cy) {
-        if (singularity.shockwaveR <= 0) return;
-        const r = singularity.shockwaveR;
-        const alpha = Math.max(0, 1 - r / (Math.max(bbW, bbH) * 0.8));
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(180,210,255,${alpha * 0.5})`;
-        ctx.lineWidth = 3 + (1 - alpha) * 8;
-        ctx.shadowColor = `rgba(150,190,255,${alpha * 0.4})`;
-        ctx.shadowBlur = 20;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-    }
-
-    // Nebula clouds — blue/purple
-    const nebulaClouds = [];
-    function spawnNebula(cx, cy) {
-        for (let i = 0; i < 6; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const dist = Math.random() * 300 + 80;
-            nebulaClouds.push({
-                x: cx + Math.cos(angle) * dist,
-                y: cy + Math.sin(angle) * dist,
-                r: Math.random() * 140 + 60,
-                hue: 230 + Math.random() * 40, // blue-purple only
-                a: 0, maxA: Math.random() * 0.06 + 0.015
-            });
-        }
-    }
-
-    function drawNebulaClouds(ctx) {
-        nebulaClouds.forEach(n => {
-            if (n.a < n.maxA) n.a += 0.0008;
-            const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-            grad.addColorStop(0, `hsla(${n.hue},50%,40%,${n.a})`);
-            grad.addColorStop(1, 'transparent');
-            ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-            ctx.fillStyle = grad; ctx.fill();
-        });
-    }
-
-    // White flash
-    function drawFlash(ctx) {
-        if (singularity.flash <= 0) return;
-        ctx.fillStyle = `rgba(230,240,255,${singularity.flash})`;
-        ctx.fillRect(0, 0, bbW, bbH);
-        singularity.flash -= 0.04;
-    }
-
-    // Animation loop
-    let bbAnimId;
-    function bbLoop() {
-        bbCtx.fillStyle = 'rgba(0,0,0,0.18)';
-        bbCtx.fillRect(0, 0, bbW, bbH);
-        const cx = bbW / 2, cy = bbH / 2;
-
-        drawCosmicDust();
-        drawNebulaClouds(bbCtx);
-
-        if (singularity.phase === 'compress') {
-            singularity.r += (50 - singularity.r) * 0.06;
-            drawSingularity(bbCtx, cx, cy);
-            // Inward-flowing energy wisps
-            if (Math.random() < 0.5) {
-                const a = Math.random() * Math.PI * 2;
-                const d = 200 + Math.random() * 100;
-                const p = new BBParticle(cx + Math.cos(a) * d, cy + Math.sin(a) * d, 'star');
-                p.vx = (cx - p.x) * 0.03; p.vy = (cy - p.y) * 0.03;
-                p.decay = 0.02;
-                p.color = [180, 200, 255];
-                bbParticles.push(p);
-            }
-        }
-
-        if (singularity.phase === 'explode' || singularity.phase === 'expand') {
-            singularity.r *= 0.94;
-            drawSingularity(bbCtx, cx, cy);
-            // Shockwave
-            if (singularity.shockwaveR > 0) {
-                singularity.shockwaveR += 12;
-                drawShockwave(bbCtx, cx, cy);
-            }
-        }
-
-        bbParticles.forEach(p => { p.update(); p.draw(bbCtx); });
-        bbParticles = bbParticles.filter(p => p.life > 0);
-        drawFlash(bbCtx);
-
-        bbAnimId = requestAnimationFrame(bbLoop);
-    }
-    bbLoop();
-
-    // Typewriter for intro text
-    const lines = ["Before data...", "Before intelligence...", "There was nothing."];
-    const bbLine1 = document.getElementById('bb-line1');
-    const bbLine2 = document.getElementById('bb-line2');
-    const bbLine3 = document.getElementById('bb-line3');
-
-    async function typewriterLine(el, text, speed = 55) {
-        el.classList.add('visible');
-        for (let i = 0; i <= text.length; i++) {
-            el.textContent = text.slice(0, i);
-            await sleep(speed);
-        }
-    }
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-    async function playIntroText() {
-        await sleep(600);
-        await typewriterLine(bbLine1, lines[0], 55);
-        await sleep(300);
-        await typewriterLine(bbLine2, lines[1], 55);
-        await sleep(300);
-        await typewriterLine(bbLine3, lines[2], 55);
-        await sleep(400);
-        const btn = document.getElementById('bigbang-btn');
-        btn.style.display = 'inline-block';
-    }
-    playIntroText();
-
-    // Button hover sound
-    document.getElementById('bigbang-btn').addEventListener('mouseenter', () => {
-        try { playBeep(); } catch (e) { }
-    });
-
-    // ── BIG BANG TRIGGER ──
-    document.getElementById('bigbang-btn').addEventListener('click', async function () {
-        ensureAudio();
-        const btn = this;
-        const cx = bbW / 2, cy = bbH / 2;
-
-        // Button collapse into singularity
-        btn.classList.add('collapsing');
-        await sleep(400);
-        btn.style.display = 'none';
-        document.getElementById('bigbang-text').style.opacity = '0';
-
-        // Phase 1: Singularity forms & compresses (~800ms)
-        singularity.phase = 'compress';
-        await sleep(800);
-
-        // Phase 2: EXPLOSION
-        playBoom();
-        singularity.phase = 'explode';
-        singularity.flash = 0.85; // bright white flash
-        singularity.shockwaveR = 10; // start shockwave
-
-        // Shockwave particles — white/blue
-        for (let i = 0; i < 250; i++) {
-            bbParticles.push(new BBParticle(cx, cy, 'shockwave'));
-        }
-        await sleep(200);
-
-        // Phase 3: Stars spreading
-        singularity.phase = 'expand';
-        for (let i = 0; i < 600; i++) {
-            bbParticles.push(new BBParticle(cx, cy, 'star'));
-        }
-        // Nebula clouds forming
-        spawnNebula(cx, cy);
-        await sleep(500);
-
-        // More gentle star dust
-        for (let i = 0; i < 200; i++) {
-            const p = new BBParticle(cx, cy, 'nebula');
-            bbParticles.push(p);
-        }
-        await sleep(300);
-
-        // Phase 4: Title fade in
-        singularity.phase = 'none';
-        const titleEl = document.getElementById('bb-title');
-        titleEl.style.display = 'block';
-        titleEl.style.opacity = '0';
-        titleEl.style.transition = 'opacity 0.8s ease';
-        requestAnimationFrame(() => titleEl.style.opacity = '1');
-
-        // Start ambient music
-        startAmbientMusic();
-
-        await sleep(1000);
-
-        // Transition to main site
-        const overlay = document.getElementById('bigbang-overlay');
-        overlay.classList.add('fade-out');
-        document.getElementById('main-site').style.display = 'block';
-        initMainSite();
-        await sleep(800);
-        overlay.style.display = 'none';
-        cancelAnimationFrame(bbAnimId);
-    });
-
-    /* ────────────────────────────────────────────
-       2.  MAIN SITE INITIALIZATION
+       1.  MAIN SITE INITIALIZATION (IMMEDIATE)
        ──────────────────────────────────────────── */
     function initMainSite() {
         addMuteButton();
@@ -466,11 +126,11 @@
         initMouseParallax();
         initContactForm();
         initPlanetHoverSounds();
-        initRocketCursor();
+        startAmbientMusic();
     }
 
     /* ────────────────────────────────────────────
-       3.  ANIMATED STARFIELD (Canvas)
+       2.  ANIMATED STARFIELD (Canvas)
        ──────────────────────────────────────────── */
     function initStarfield() {
         const canvas = document.getElementById('starfield-canvas');
@@ -559,7 +219,7 @@
     }
 
     /* ────────────────────────────────────────────
-       4.  MOUSE PARALLAX / 3D GALAXY ROTATION
+       3.  MOUSE PARALLAX / 3D GALAXY ROTATION
        ──────────────────────────────────────────── */
     function initMouseParallax() {
         document.addEventListener('mousemove', (e) => {
@@ -575,7 +235,7 @@
     }
 
     /* ────────────────────────────────────────────
-       5.  TYPEWRITER HERO TEXT
+       4.  TYPEWRITER HERO TEXT
        ──────────────────────────────────────────── */
     function initTypewriter() {
         const phrases = [
@@ -613,7 +273,7 @@
     }
 
     /* ────────────────────────────────────────────
-       6.  SCROLL REVEAL
+       5.  SCROLL REVEAL
        ──────────────────────────────────────────── */
     function initScrollReveal() {
         const observer = new IntersectionObserver((entries) => {
@@ -652,12 +312,12 @@
     }
 
     /* ────────────────────────────────────────────
-       7.  SKILL BARS — handled by scroll reveal
+       6.  SKILL BARS — handled by scroll reveal
        ──────────────────────────────────────────── */
     function initSkillBars() { }
 
     /* ────────────────────────────────────────────
-       8.  KPI COUNTERS
+       7.  KPI COUNTERS
        ──────────────────────────────────────────── */
     function initKPICounters() {
         const observer = new IntersectionObserver((entries) => {
@@ -680,7 +340,7 @@
     }
 
     /* ────────────────────────────────────────────
-       9.  CHARTS (Canvas)
+       8.  CHARTS (Canvas)
        ──────────────────────────────────────────── */
     function initCharts() {
         const observer = new IntersectionObserver((entries) => {
@@ -788,7 +448,7 @@
     }
 
     /* ────────────────────────────────────────────
-       10. GITHUB API
+       9.  GITHUB API
        ──────────────────────────────────────────── */
     async function fetchGitHubRepos() {
         const container = document.getElementById('github-repos');
@@ -830,7 +490,7 @@
     }
 
     /* ────────────────────────────────────────────
-       11. AI ASSISTANT
+       10. AI ASSISTANT
        ──────────────────────────────────────────── */
     function initAIAssistant() {
         const toggle = document.getElementById('ai-toggle');
@@ -914,7 +574,7 @@
             },
             skills: {
                 keywords: ['skill', 'technology', 'tech', 'stack', 'programming', 'language', 'python', 'java', 'sql', 'power bi', 'tool', 'can she', 'proficient', 'expertise', 'capable'],
-                answer: `Prima's key skills include:<br>
+                answer: `Rokib's key skills include:<br>
                     🐍 <strong>Python</strong> — Advanced (950 XP)<br>
                     🗄️ <strong>MySQL/SQL</strong> — Advanced (900 XP)<br>
                     📊 <strong>Power BI</strong> — Advanced (920 XP)<br>
@@ -925,12 +585,12 @@
             },
             research: {
                 keywords: ['research', 'interest', 'focus', 'future', 'phd', 'master', 'goal', 'vision', 'ai for social', 'study', 'academic'],
-                answer: `Prima's research interests include:<br>
+                answer: `Rokib's research interests include:<br>
                     🎯 <strong>Current Focus:</strong> Applied Data Science & AI for Social Good<br>
                     🔬 <strong>Areas:</strong> NLP, Machine Learning, Explainable AI, Data Analytics<br>
                     🚀 <strong>Future Goal:</strong> Pursuing Master's & PhD in AI and Data Science<br>
                     🤝 <strong>Open to:</strong> Research collaboration & impactful AI projects<br>
-                    he envisions AI as a transparent partner for humanitarian impact. 🌍`
+                    He envisions AI as a transparent partner for humanitarian impact. 🌍`
             },
             education: {
                 keywords: ['education', 'university', 'degree', 'study', 'graduate', 'college', 'school', 'daffodil', 'diu', 'major'],
@@ -979,7 +639,7 @@
     }
 
     /* ────────────────────────────────────────────
-       12. EASTER EGG
+       11. EASTER EGG
        ──────────────────────────────────────────── */
     function initEasterEgg() {
         const egg = document.getElementById('easter-egg');
@@ -996,7 +656,7 @@
     }
 
     /* ────────────────────────────────────────────
-       13. GAMIFICATION
+       12. GAMIFICATION
        ──────────────────────────────────────────── */
     function initGamification() { updateProgress(); }
 
@@ -1025,7 +685,7 @@
     }
 
     /* ────────────────────────────────────────────
-       14. NAVIGATION
+       13. NAVIGATION
        ──────────────────────────────────────────── */
     function initNavigation() {
         const toggle = document.getElementById('nav-toggle');
@@ -1041,7 +701,7 @@
     }
 
     /* ────────────────────────────────────────────
-       15. CONTACT FORM
+       14. CONTACT FORM
        ──────────────────────────────────────────── */
     function initContactForm() {
         const form = document.getElementById('contact-form');
@@ -1072,7 +732,7 @@
     }
 
     /* ────────────────────────────────────────────
-       16. PLANET HOVER SOUNDS
+       15. PLANET HOVER SOUNDS
        ──────────────────────────────────────────── */
     function initPlanetHoverSounds() {
         document.querySelectorAll('.glass-card').forEach(card => {
@@ -1082,242 +742,7 @@
         });
     }
 
-    /* ────────────────────────────────────────────
-       17. ROCKET CURSOR SYSTEM
-       ──────────────────────────────────────────── */
-    function initRocketCursor() {
-        document.body.classList.add('rocket-active');
-        const rocket = document.getElementById('rocket-cursor');
-        const trailCanvas = document.getElementById('rocket-trail-canvas');
-        const trailCtx = trailCanvas.getContext('2d');
-        let tW, tH;
-
-        function resizeTrail() {
-            tW = trailCanvas.width = window.innerWidth;
-            tH = trailCanvas.height = window.innerHeight;
-        }
-        resizeTrail();
-        window.addEventListener('resize', resizeTrail);
-
-        // Smooth following state
-        let rocketX = window.innerWidth / 2, rocketY = window.innerHeight / 2;
-        let targetX = rocketX, targetY = rocketY;
-        let prevX = rocketX, prevY = rocketY;
-        let velocityX = 0, velocityY = 0;
-        let currentAngle = 0;
-        let isHovering = false;
-
-        // Trail particles
-        const trailParticles = [];
-        // Click burst particles
-        const burstParticles = [];
-        // Planet gravity glow state
-        let gravityTarget = null;
-        let gravityGlow = 0;
-
-        // Sci-fi whoosh for planet flyby
-        function playWhoosh() {
-            if (!audioCtx || muted) return;
-            try {
-                const osc = audioCtx.createOscillator();
-                const g = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-                g.gain.setValueAtTime(0.04, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-                osc.connect(g); g.connect(musicGain);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-            } catch (e) { }
-        }
-
-        // Track mouse position
-        document.addEventListener('mousemove', (e) => {
-            targetX = e.clientX;
-            targetY = e.clientY;
-        });
-
-        // Detect hovering clickable elements
-        document.addEventListener('mouseover', (e) => {
-            const el = e.target.closest('a, button, [role="button"], input, textarea, select, .project-card, .glass-card');
-            if (el) {
-                if (!isHovering) { isHovering = true; rocket.classList.add('hovering'); }
-            } else {
-                if (isHovering) { isHovering = false; rocket.classList.remove('hovering'); }
-            }
-        });
-
-        // Click burst
-        document.addEventListener('mousedown', () => {
-            for (let i = 0; i < 12; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 3 + 1.5;
-                burstParticles.push({
-                    x: rocketX, y: rocketY + 18,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed + 1,
-                    r: Math.random() * 2 + 1,
-                    life: 1,
-                    color: Math.random() < 0.5 ? [120, 170, 255] : [180, 210, 255]
-                });
-            }
-        });
-
-        // Find planet icon positions for gravity effect
-        function getPlanetPositions() {
-            const icons = document.querySelectorAll('.planet-icon');
-            const positions = [];
-            icons.forEach(icon => {
-                const rect = icon.getBoundingClientRect();
-                positions.push({
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2,
-                    el: icon
-                });
-            });
-            return positions;
-        }
-
-        // Planet hover sound debounce
-        let lastPlanetSound = 0;
-
-        // Main animation loop
-        function rocketLoop() {
-            // Smooth follow with lerp
-            const lerp = 0.12;
-            rocketX += (targetX - rocketX) * lerp;
-            rocketY += (targetY - rocketY) * lerp;
-
-            // Velocity
-            velocityX = rocketX - prevX;
-            velocityY = rocketY - prevY;
-            const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-
-            // Tilt based on movement direction
-            if (speed > 0.5) {
-                const targetAngle = Math.atan2(velocityX, -velocityY) * (180 / Math.PI);
-                currentAngle += (targetAngle - currentAngle) * 0.08;
-            } else {
-                currentAngle *= 0.95; // Return to upright
-            }
-
-            // Planet gravity pull
-            const planets = getPlanetPositions();
-            let closestDist = Infinity;
-            let pullX = 0, pullY = 0;
-            let newGravityTarget = null;
-
-            planets.forEach(p => {
-                const dx = p.x - rocketX;
-                const dy = p.y - rocketY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 200 && dist < closestDist) {
-                    closestDist = dist;
-                    const force = (1 - dist / 200) * 0.6;
-                    pullX = (dx / dist) * force;
-                    pullY = (dy / dist) * force;
-                    newGravityTarget = p;
-                }
-            });
-
-            // Apply subtle gravity pull
-            rocketX += pullX;
-            rocketY += pullY;
-
-            // Planet glow effect
-            if (newGravityTarget !== gravityTarget) {
-                // Remove old glow
-                if (gravityTarget && gravityTarget.el) {
-                    gravityTarget.el.style.filter = '';
-                    gravityTarget.el.style.transform = '';
-                }
-                gravityTarget = newGravityTarget;
-                if (gravityTarget) {
-                    const now = Date.now();
-                    if (now - lastPlanetSound > 500) {
-                        playWhoosh();
-                        lastPlanetSound = now;
-                    }
-                }
-            }
-            if (gravityTarget && gravityTarget.el) {
-                gravityGlow += (1 - gravityGlow) * 0.1;
-                gravityTarget.el.style.filter = `drop-shadow(0 0 ${12 * gravityGlow}px rgba(100,180,255,${0.6 * gravityGlow}))`;
-                gravityTarget.el.style.transform = `translateY(-${4 * gravityGlow}px) scale(${1 + 0.08 * gravityGlow})`;
-            } else {
-                gravityGlow *= 0.9;
-            }
-
-            // Position the rocket
-            const clampAngle = Math.max(-35, Math.min(35, currentAngle));
-            rocket.style.left = rocketX + 'px';
-            rocket.style.top = rocketY + 'px';
-            rocket.style.transform = `translate(-16px, -10px) rotate(${clampAngle}deg)`;
-
-            // Spawn trail particles when moving fast
-            if (speed > 2) {
-                const count = Math.min(3, Math.floor(speed / 4));
-                for (let i = 0; i < count; i++) {
-                    trailParticles.push({
-                        x: rocketX + (Math.random() - 0.5) * 4,
-                        y: rocketY + 18 + Math.random() * 6,
-                        vx: -velocityX * 0.1 + (Math.random() - 0.5) * 0.5,
-                        vy: -velocityY * 0.1 + Math.random() * 0.8,
-                        r: Math.random() * 1.5 + 0.5,
-                        life: 1,
-                        type: 'trail'
-                    });
-                }
-            }
-
-            // ── Draw trail & burst on canvas ──
-            trailCtx.clearRect(0, 0, tW, tH);
-
-            // Trail particles
-            for (let i = trailParticles.length - 1; i >= 0; i--) {
-                const p = trailParticles[i];
-                p.x += p.vx; p.y += p.vy;
-                p.life -= 0.025;
-                if (p.life <= 0) { trailParticles.splice(i, 1); continue; }
-                trailCtx.beginPath();
-                trailCtx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-                trailCtx.fillStyle = `rgba(140,180,255,${p.life * 0.5})`;
-                trailCtx.fill();
-            }
-
-            // Burst particles
-            for (let i = burstParticles.length - 1; i >= 0; i--) {
-                const p = burstParticles[i];
-                p.x += p.vx; p.y += p.vy;
-                p.vx *= 0.96; p.vy *= 0.96;
-                p.life -= 0.03;
-                if (p.life <= 0) { burstParticles.splice(i, 1); continue; }
-                const [cr, cg, cb] = p.color;
-                trailCtx.beginPath();
-                trailCtx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-                trailCtx.fillStyle = `rgba(${cr},${cg},${cb},${p.life * 0.8})`;
-                trailCtx.shadowColor = `rgba(${cr},${cg},${cb},${p.life * 0.4})`;
-                trailCtx.shadowBlur = 6;
-                trailCtx.fill();
-                trailCtx.shadowBlur = 0;
-            }
-
-            // Gravity glow ring around nearby planet
-            if (gravityTarget && gravityGlow > 0.05) {
-                trailCtx.beginPath();
-                trailCtx.arc(gravityTarget.x, gravityTarget.y, 40 + 10 * gravityGlow, 0, Math.PI * 2);
-                trailCtx.strokeStyle = `rgba(100,170,255,${gravityGlow * 0.25})`;
-                trailCtx.lineWidth = 2;
-                trailCtx.shadowColor = `rgba(100,170,255,${gravityGlow * 0.3})`;
-                trailCtx.shadowBlur = 12;
-                trailCtx.stroke();
-                trailCtx.shadowBlur = 0;
-            }
-
-            prevX = rocketX; prevY = rocketY;
-            requestAnimationFrame(rocketLoop);
-        }
-        rocketLoop();
-    }
+    // Initialize on page load
+    initMainSite();
 
 })();
