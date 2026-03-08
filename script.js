@@ -6,7 +6,7 @@
        ──────────────────────────────────────────── */
     let mouseX = 0, mouseY = 0;
     const discovered = new Set(JSON.parse(localStorage.getItem('discovered') || '[]'));
-    const PLANETS = ['hero', 'about', 'skills', 'projects', 'experience', 'achievements', 'certifications', 'leadership', 'command-center', 'contact'];
+    const PLANETS = ['hero', 'about', 'skills', 'projects', 'research', 'experience', 'achievements', 'certifications', 'leadership', 'command-center', 'contact'];
 
     /* ────────────────────────────────────────────
        AUDIO  — Web Audio API synth sounds
@@ -130,87 +130,184 @@
     }
 
     /* ────────────────────────────────────────────
-       2.  ANIMATED STARFIELD (Canvas)
+       2.  CLEAN MODERN BACKGROUND (Canvas)
        ──────────────────────────────────────────── */
     function initStarfield() {
         const canvas = document.getElementById('starfield-canvas');
         const ctx = canvas.getContext('2d');
         let W, H;
+        let time = 0;
 
         function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
         resize();
         window.addEventListener('resize', resize);
 
-        // Stars – 3 parallax layers
-        const layers = [
-            { count: 200, speed: 0.15, maxR: 1.2, parallax: 0.02, stars: [] },
-            { count: 120, speed: 0.3, maxR: 1.8, parallax: 0.05, stars: [] },
-            { count: 60, speed: 0.5, maxR: 2.5, parallax: 0.1, stars: [] }
-        ];
-        layers.forEach(l => {
-            for (let i = 0; i < l.count; i++) {
-                l.stars.push({
-                    x: Math.random() * W, y: Math.random() * H,
-                    r: Math.random() * l.maxR + 0.3,
-                    twinkle: Math.random() * Math.PI * 2,
-                    twinkleSpeed: Math.random() * 0.03 + 0.01
-                });
-            }
-        });
-
-        // Shooting stars
-        const shootings = [];
-        function spawnShooting() {
-            shootings.push({
-                x: Math.random() * W, y: Math.random() * H * 0.4,
-                angle: Math.PI * 0.2 + Math.random() * 0.3,
-                speed: 8 + Math.random() * 6,
-                len: 80 + Math.random() * 60,
-                life: 1, decay: 0.015 + Math.random() * 0.01
+        // Smooth flowing diagonal lines
+        const flowingLines = [];
+        for (let i = 0; i < 12; i++) {
+            flowingLines.push({
+                x1: -300 + (i * 150),
+                y1: -300,
+                x2: W + 300 + (i * 150),
+                y2: H + 300,
+                speed: Math.random() * 1.5 + 0.8,
+                hue: Math.random() < 0.5 ? 200 : 270,
+                width: Math.random() * 1.2 + 0.6,
+                opacity: Math.random() * 0.35 + 0.25,
+                offset: Math.random() * 2000
             });
         }
-        setInterval(() => { if (Math.random() < 0.5) spawnShooting(); }, 3000);
+
+        // Small floating particles/lights
+        const particles = [];
+        function createParticle() {
+            particles.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                life: 1,
+                size: Math.random() * 2.5 + 1,
+                hue: Math.random() < 0.4 ? 30 : Math.random() < 0.5 ? 200 : 270,
+                decay: Math.random() * 0.002 + 0.0015
+            });
+        }
+        
+        // Create initial particles
+        for (let i = 0; i < 25; i++) {
+            createParticle();
+        }
+
+        function drawBackground() {
+            // Clean dark background
+            const mainGrad = ctx.createLinearGradient(0, 0, W, H);
+            mainGrad.addColorStop(0, '#040810');
+            mainGrad.addColorStop(0.5, '#080d18');
+            mainGrad.addColorStop(1, '#040810');
+            ctx.fillStyle = mainGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // Subtle glow from mouse area
+            const glowGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 800);
+            glowGrad.addColorStop(0, `rgba(100, 200, 255, 0.06)`);
+            glowGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = glowGrad;
+            ctx.fillRect(0, 0, W, H);
+        }
+
+        function drawFlowingLines() {
+            flowingLines.forEach(line => {
+                line.offset += line.speed;
+                if (line.offset > 4000) {
+                    line.offset = -1000;
+                }
+
+                // Calculate line position with smooth offset
+                const dist = Math.hypot(line.x2 - line.x1, line.y2 - line.y1);
+                const dirX = (line.x2 - line.x1) / dist;
+                const dirY = (line.y2 - line.y1) / dist;
+
+                const offsetX = dirX * line.offset;
+                const offsetY = dirY * line.offset;
+
+                const x1 = line.x1 + offsetX;
+                const y1 = line.y1 + offsetY;
+                const x2 = line.x2 + offsetX;
+                const y2 = line.y2 + offsetY;
+
+                // Draw glow effect (wider, more transparent)
+                ctx.strokeStyle = `hsla(${line.hue}, 100%, 50%, ${line.opacity * 0.3})`;
+                ctx.lineWidth = line.width * 5;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.shadowColor = `hsl(${line.hue}, 100%, 50%)`;
+                ctx.shadowBlur = 18;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+
+                // Draw main line
+                ctx.strokeStyle = `hsla(${line.hue}, 100%, 50%, ${line.opacity})`;
+                ctx.lineWidth = line.width;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            });
+        }
+
+        function drawParticles() {
+            particles.forEach((p, idx) => {
+                // Update position
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+
+                // Wrap around screen
+                if (p.x < -50) p.x = W + 50;
+                if (p.x > W + 50) p.x = -50;
+                if (p.y < -50) p.y = H + 50;
+                if (p.y > H + 50) p.y = -50;
+
+                // Respawn if dead
+                if (p.life <= 0) {
+                    particles[idx] = {
+                        x: Math.random() * W,
+                        y: Math.random() * H,
+                        vx: (Math.random() - 0.5) * 0.8,
+                        vy: (Math.random() - 0.5) * 0.8,
+                        life: 1,
+                        size: Math.random() * 2.5 + 1,
+                        hue: Math.random() < 0.4 ? 30 : Math.random() < 0.5 ? 200 : 270,
+                        decay: Math.random() * 0.002 + 0.0015
+                    };
+                    p = particles[idx];
+                }
+
+                // Draw particle glow
+                ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, ${p.life * 0.5})`;
+                ctx.shadowColor = `hsl(${p.hue}, 100%, 50%)`;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw particle core
+                ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.life * 0.8})`;
+                ctx.shadowColor = `hsl(${p.hue}, 100%, 50%)`;
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * 0.4 * p.life, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+
+        function drawMouseGlow() {
+            // Interactive cursor glow
+            const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 400);
+            grad.addColorStop(0, `rgba(100, 200, 255, 0.15)`);
+            grad.addColorStop(0.5, `rgba(100, 200, 255, 0.05)`);
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+        }
 
         function loop() {
-            ctx.clearRect(0, 0, W, H);
+            time++;
 
-            // Nebula background layers responding to mouse
-            const mx = W * 0.5 + mouseX * 0.02, my = H * 0.5 + mouseY * 0.02;
-            const ng1 = ctx.createRadialGradient(mx * 0.7, my * 0.6, 0, mx * 0.7, my * 0.6, 500);
-            ng1.addColorStop(0, 'rgba(100,80,180,0.035)'); ng1.addColorStop(1, 'transparent');
-            ctx.fillStyle = ng1; ctx.fillRect(0, 0, W, H);
-            const ng2 = ctx.createRadialGradient(mx * 1.3, my * 1.2, 0, mx * 1.3, my * 1.2, 400);
-            ng2.addColorStop(0, 'rgba(60,120,200,0.025)'); ng2.addColorStop(1, 'transparent');
-            ctx.fillStyle = ng2; ctx.fillRect(0, 0, W, H);
+            // Draw all layers
+            drawBackground();
+            drawFlowingLines();
+            drawParticles();
+            drawMouseGlow();
 
-            // Stars
-            layers.forEach(l => {
-                l.stars.forEach(s => {
-                    s.twinkle += s.twinkleSpeed;
-                    const alpha = 0.4 + Math.sin(s.twinkle) * 0.4;
-                    const px = s.x + (mouseX - W / 2) * l.parallax;
-                    const py = s.y + (mouseY - H / 2) * l.parallax;
-                    ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(220,230,255,${alpha})`;
-                    ctx.fill();
-                });
-            });
-
-            // Shooting stars
-            shootings.forEach(s => {
-                const endX = s.x - Math.cos(s.angle) * s.len;
-                const endY = s.y + Math.sin(s.angle) * s.len;
-                const grad = ctx.createLinearGradient(s.x, s.y, endX, endY);
-                grad.addColorStop(0, `rgba(220,235,255,${s.life})`);
-                grad.addColorStop(1, 'rgba(220,235,255,0)');
-                ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(endX, endY);
-                ctx.strokeStyle = grad; ctx.lineWidth = 1.5; ctx.stroke();
-                s.x += Math.cos(s.angle) * s.speed;
-                s.y += Math.sin(s.angle) * s.speed;
-                s.life -= s.decay;
-            });
-            for (let i = shootings.length - 1; i >= 0; i--) {
-                if (shootings[i].life <= 0) shootings.splice(i, 1);
+            // Create new particles to maintain count
+            if (time % 50 === 0 && particles.length < 30) {
+                createParticle();
             }
 
             requestAnimationFrame(loop);
@@ -508,9 +605,9 @@
             'Tell me about his projects',
             'What awards did he win?',
             'What are his skills?',
-            'Research interests?',
+            'What is he learning?',
             'Education background?',
-            'Work experience?'
+            'How to contact him?'
         ];
         suggestions.forEach(s => {
             const btn = document.createElement('button');
@@ -552,29 +649,29 @@
         const KB = {
             identity: {
                 keywords: ['who', 'rokib', 'hasan', 'about', 'introduce', 'tell me about', 'herself', 'background', 'bio'],
-                answer: `<strong>Rokib Hasan</strong> is a Software Engineering graduate majoring in <em>Data Science</em> from Daffodil International University, Dhaka, Bangladesh. He's passionate about AI, data analytics, and building intelligent systems for social impact. 🚀`
+                answer: `<strong>Rokib Hasan</strong> is a Software Engineering graduate majoring in <em>Data Science</em> from Daffodil International University, Dhaka, Bangladesh. Check his <strong>My Journey</strong> section to learn more! 🚀`
             },
             projects: {
                 keywords: ['project', 'built', 'portfolio', 'work', 'develop', 'libra', 'zerowaste', 'blood', 'supply chain', 'pc build', 'innovation'],
-                answer: `Rokib has built several impactful projects:<br>
+                answer: `Rokib has built several impressive projects in his <strong>What I've Built</strong> section:<br>
                     🔹 <strong>LibraAI</strong> — AI-powered virtual librarian using NLP & ML<br>
                     🔹 <strong>ZeroWaste</strong> — AI for sustainable waste management<br>
-                    🔹 <strong>Football Match Analysis</strong> — Built an AI-based football analysis system using a custom-trained model to detect players, ball, and referees, performing real-time and recorded match analytics including player speed, distance covered, team positioning, and camera motion estimation.<br>
-                    🔹 <strong>MedicartAI</strong> — Built an AI-powered healthcare platform with pharmacy services, prescription uploads, and a 24/7 AI chatbot (Groq + Llama 3.3) using FastAPI, SQLite, and JWT authentication.<br>
+                    🔹 <strong>Football Match Analysis</strong> — AI-based football analysis system with custom-trained model<br>
+                    🔹 <strong>MedicartAI</strong> — AI-powered healthcare platform with 24/7 AI chatbot<br>
                     🔹 <strong>BloodSupport</strong> — Blood bank system in C<br>
-                    Check the <strong>Innovation Station</strong> planet for details! 🛰️`
+                    Check the <strong>What I've Built</strong> section for full details! 💻`
             },
             awards: {
                 keywords: ['award', 'achievement', 'trophy', 'win', 'won', 'hackathon', 'nasa', 'competition', 'hall of fame', 'prize', 'runner', 'champion', 'nominee'],
-                answer: `Rokib has an impressive achievement record! 🏆<br>
+                answer: `Rokib has an impressive record in <strong>My Wins</strong>! 🏆<br>
                     🥇 <strong>1st Runner-Up</strong> — DIU Agentic AI Excellence Award<br>
                     🏁 <strong>2nd Runner-Up</strong> — Robotics Project Exhibition<br>
-                    🌌 <strong>7th</strong> — Data Hackathon,DIU Data Science Summit<br>
-                    ...and many more in the <strong>Hall of Fame</strong>! ✨`
+                    🌟 <strong>7th Place — Top 1.4%</strong> — Data Hackathon, DIU Data Science Summit<br>
+                    Check the <strong>My Wins</strong> section for all achievements! ✨`
             },
             skills: {
                 keywords: ['skill', 'technology', 'tech', 'stack', 'programming', 'language', 'python', 'java', 'sql', 'power bi', 'tool', 'can she', 'proficient', 'expertise', 'capable'],
-                answer: `Rokib's key skills include:<br>
+                answer: `Rokib's key skills in <strong>My Toolkit</strong>:<br>
                     🐍 <strong>Python</strong> — Advanced (950 XP)<br>
                     🗄️ <strong>MySQL/SQL</strong> — Advanced (900 XP)<br>
                     📊 <strong>Power BI</strong> — Advanced (920 XP)<br>
@@ -584,13 +681,17 @@
                     Plus C/C++, Web Design & Problem Solving! 💪`
             },
             research: {
-                keywords: ['research', 'interest', 'focus', 'future', 'phd', 'master', 'goal', 'vision', 'ai for social', 'study', 'academic'],
-                answer: `Rokib's research interests include:<br>
-                    🎯 <strong>Current Focus:</strong> Applied Data Science & AI for Social Good<br>
-                    🔬 <strong>Areas:</strong> NLP, Machine Learning, Explainable AI, Data Analytics<br>
+                keywords: ['research', 'interest', 'focus', 'future', 'phd', 'master', 'goal', 'vision', 'ai for social', 'study', 'academic', 'paper', 'publication', 'football', 'sports', 'analytics'],
+                answer: `Rokib's research work includes:<br>
+                    <strong>📄 Ongoing Research Paper:</strong><br>
+                    "Enhancing Sports Performance with Big Data and Machine Learning-Powered Predictive Analytics"<br><br>
+                    🎯 <strong>Focus:</strong> Interpretable AI framework for tactical football analysis using XAI techniques<br>
+                    🤖 <strong>Tech Stack:</strong> YOLOv8, DeepSORT, Grad-CAM, SHAP, Computer Vision<br>
+                    📊 <strong>Key Metric:</strong> mAP@0.5 = 0.677 with Player AP: 0.990, Referee AP: 0.995<br>
+                    ⚽ <strong>Application:</strong> Actionable insights for coaching staff including event recognition & performance metrics<br><br>
+                    🎯 <strong>Research Interests:</strong> Explainable AI, Machine Learning, Data Analytics, AI for Social Good<br>
                     🚀 <strong>Future Goal:</strong> Pursuing Master's & PhD in AI and Data Science<br>
-                    🤝 <strong>Open to:</strong> Research collaboration & impactful AI projects<br>
-                    He envisions AI as a transparent partner for humanitarian impact. 🌍`
+                    Check the <strong>Research</strong> section for detailed publication! 🔬`
             },
             education: {
                 keywords: ['education', 'university', 'degree', 'study', 'graduate', 'college', 'school', 'daffodil', 'diu', 'major'],
@@ -607,9 +708,10 @@
             },
             certifications: {
                 keywords: ['certification', 'certificate', 'course', 'certified', 'microsoft', 'aws', 'kaggle', 'coursera', 'deeplearning'],
-                answer: `Rokib holds certifications from top platforms:<br>
+                answer: `Rokib holds certifications from top platforms in his <strong>Certificates</strong> section:<br>
                     ☁️ AWS — ML for NLP & ML Foundations<br>
-                    🧠 DeepLearning.AI — Supervised ML<br>`
+                    🧠 DeepLearning.AI — Supervised ML<br>
+                    Constantly learning and growing! 📚`
             },
             contact: {
                 keywords: ['contact', 'email', 'phone', 'reach', 'connect', 'linkedin', 'github', 'hire', 'message'],
@@ -621,7 +723,7 @@
             },
             greeting: {
                 keywords: ['hi', 'hello', 'hey', 'good', 'morning', 'evening', 'afternoon', 'sup', 'yo'],
-                answer: `Hello, explorer! 👋 Welcome to Rokib's Universe. I can tell you about his <strong>projects</strong>, <strong>awards</strong>, <strong>skills</strong>, <strong>research interests</strong>, <strong>education</strong>, or <strong>experience</strong>. What would you like to know? 🚀`
+                answer: `Hello, friend! 👋 Welcome to Rokib's Portfolio. I can tell you about his <strong>journey</strong>, <strong>toolkit</strong>, <strong>projects</strong>, <strong>career</strong>, <strong>achievements</strong>, <strong>certifications</strong>, or <strong>contact info</strong>. What would you like to know? 🚀`
             }
         };
 
